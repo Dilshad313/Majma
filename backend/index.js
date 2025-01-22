@@ -1,29 +1,17 @@
 const express = require('express');
 const cors = require('cors');
-const dotenv = require('dotenv');
-const connectDB = require('./config/db');
-
-// Routes
-const prayerRoutes = require('./routes/prayerRoutes');
-const eventRoutes = require('./routes/eventRoutes');
-const donationRoutes = require('./routes/donationRoutes');
-const locationRoutes = require('./routes/locationRoutes');
-
-dotenv.config();
-connectDB();
+const bodyParser = require('body-parser');
+const mongoose = require('./config/db');
+const authRoutes = require('./routes/authRoutes');
 
 const app = express();
+const PORT = 5000;
+
+// Middleware
 app.use(cors());
-app.use(express.json()); // Middleware to parse JSON data
+app.use(bodyParser.json());
 
-// Use Routes
-app.use('/api', prayerRoutes);
-app.use('/api', eventRoutes);
-app.use('/api', donationRoutes);
-app.use('/api', locationRoutes);
+// Routes
+app.use('/auth', authRoutes);
 
-// Start Server
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));

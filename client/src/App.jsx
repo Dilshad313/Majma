@@ -1,44 +1,24 @@
+// App.jsx
 import React from 'react';
-import './App.css';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Navbar from './components/Navbar';
-import Footer from './components/Footer';
-import Home from './pages/Home';
-import Prayer from './pages/Prayer';
-import Events from './pages/Events';
-import Donations from './pages/Donations';
-import Contact from './pages/Contact';
-import SideBar from './components/SideBar';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Signup from './pages/Signup.jsx';
+import Login from './pages/Login.jsx';
+import Dashboard from './pages/Dashboard.jsx';
+import Home from './pages/Home.jsx';
 
-const App = () => {
+function App() {
   return (
     <Router>
-      <div className="flex flex-col h-screen">
-        {/* Navbar */}
-        <Navbar />
-
-        {/* Main Content Area */}
-        <div className="flex flex-1">
-          {/* Sidebar */}
-          <SideBar />
-
-          {/* Page Content */}
-          <div className="flex-1 p-4">
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/prayer-times" element={<Prayer />} />
-              <Route path="/events" element={<Events />} />
-              <Route path="/donations" element={<Donations />} />
-              <Route path="/contact" element={<Contact />} />
-            </Routes>
-          </div>
-        </div>
-
-        {/* Footer */}
-        <Footer />
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+        </Routes>
       </div>
     </Router>
   );
-};
+}
 
 export default App;

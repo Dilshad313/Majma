@@ -1,24 +1,17 @@
-// App.jsx
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Signup from './pages/Signup.jsx';
-import Login from './pages/Login.jsx';
-import Dashboard from './pages/Dashboard.jsx';
-import Home from './pages/Home.jsx';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'; // Use Routes instead of Switch
+import Home from './pages/Home';
+import Login from './pages/Login';
 
-function App() {
-  return (
-    <Router>
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-        </Routes>
-      </div>
-    </Router>
-  );
-}
+const App = () => {
+    return (
+        <Router>
+            <Routes> {/* Use Routes instead of Switch */}
+                <Route path="/" element={<Home />} /> {/* Use element prop instead of component */}
+                <Route path="/login" element={<Login />} />
+            </Routes>
+        </Router>
+    );
+};
 
 export default App;

@@ -1,18 +1,46 @@
 const jwt = require('jsonwebtoken');
-const SECRET_KEY = 'your_secret_key';
+const User = require('../models/User');
 
-const authMiddleware = (req, res, next) => {
-  const token = req.headers['authorization'];
-
-  if (!token) return res.status(401).json({ message: 'No token provided' });
-
+const authMiddleware = async (req, res, next) => {
   try {
-    const decoded = jwt.verify(token, SECRET_KEY);
-    req.userId = decoded.id;
+    const token = req.header('Authorization')?.replace('Bearer ', '');
+    
+    if (!token) {
+      return res.status(401).json({ message: 'No token, authorization denied' });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    
+    const user = await User.findById(decoded.id);
+    
+    if (!user) {
+      return res.status(401).json({ message: 'User not found' });
+    }
+
+    req.user = user;
+    req.token = token;
+
     next();
   } catch (error) {
-    res.status(401).json({ message: 'Invalid token' });
+    res.status(401).json({ 
+      message: 'Please authenticate', 
+      error: error.message 
+    });
   }
 };
 
-module.exports = authMiddleware;
+const roleMiddleware = (roles) => {
+  return (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+      return res.status(403).json({ 
+        message: 'Access denied. Insufficient permissions.' 
+      });
+    }
+    next();
+  };
+};
+
+module.exports = {
+  authMiddleware,
+  roleMiddleware
+};

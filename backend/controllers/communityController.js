@@ -11,41 +11,38 @@ exports.registerNikah = async (req, res) => {
     await nikahRegistration.save();
     res.status(201).json(nikahRegistration);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
 
 exports.manageFuneralService = async (req, res) => {
   try {
-    const funeralService = new FuneralService({
-      ...req.body,
-      managedBy: req.user._id
-    });
+    const funeralService = new FuneralService(req.body);
     await funeralService.save();
     res.status(201).json(funeralService);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
 
 exports.registerVolunteer = async (req, res) => {
   try {
-    const volunteerRegistration = new Volunteer({
+    const volunteer = new Volunteer({
       ...req.body,
-      user: req.user._id
+      userId: req.user._id
     });
-    await volunteerRegistration.save();
-    res.status(201).json(volunteerRegistration);
+    await volunteer.save();
+    res.status(201).json(volunteer);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
 
 exports.getVolunteers = async (req, res) => {
   try {
-    const volunteers = await Volunteer.find().populate('user', 'firstName lastName email');
+    const volunteers = await Volunteer.find();
     res.json(volunteers);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
 };

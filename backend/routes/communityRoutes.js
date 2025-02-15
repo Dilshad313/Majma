@@ -15,8 +15,6 @@ const {
 router.post('/nikah', authMiddleware, registerNikah);
 router.post('/funeral', authMiddleware, manageFuneralService);
 router.post('/volunteer', authMiddleware, registerVolunteer);
-
-// Admin Routes
-router.get('/volunteers', authMiddleware, roleMiddleware(['admin']), getVolunteers);
+router.get('/volunteers', authMiddleware, getVolunteers);
 
 module.exports = router;

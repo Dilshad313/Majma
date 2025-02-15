@@ -2,83 +2,25 @@
 const mongoose = require('mongoose');
 const User = require('./User');
 
-class Nikah {
-    constructor(id, groomName, brideName, date, time, imamId) {
-        this.id = id;
-        this.groomName = groomName;
-        this.brideName = brideName;
-        this.date = date;
-        this.time = time;
-        this.imamId = imamId;
-        this.witnesses = [];
-        this.location = '';
-        this.mahr = '';
-        this.status = 'scheduled';
-        this.documents = [];
-        this.createdAt = new Date();
-        this.updatedAt = new Date();
-    }
+const nikahSchema = new mongoose.Schema({
+  groomName: { type: String, required: true },
+  brideName: { type: String, required: true },
+  date: { type: Date, required: true },
+  time: { type: String, required: true },
+  imam: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  witnesses: [{ type: String }],
+  mahr: { type: String },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now }
+});
 
-    static create(groomName, brideName, date, time, imamId) {
-        return new Nikah(
-            Date.now().toString(),
-            groomName,
-            brideName,
-            date,
-            time,
-            imamId
-        );
-    }
+nikahSchema.methods.addWitness = function (witnessInfo) {
+  this.witnesses.push(witnessInfo);
+};
 
-    addWitness(witnessInfo) {
-        if (this.witnesses.length < 2) {
-            this.witnesses.push(witnessInfo);
-            this.updatedAt = new Date();
-            return true;
-        }
-        return false;
-    }
+nikahSchema.methods.setMahr = function (mahrDetails) {
+  this.mahr = mahrDetails;
+};
 
-    setMahr(mahrDetails) {
-        this.mahr = mahrDetails;
-        this.updatedAt = new Date();
-    }
-
-    setLocation(location) {
-        this.location = location;
-        this.updatedAt = new Date();
-    }
-
-    addDocument(documentInfo) {
-        this.documents.push({
-            ...documentInfo,
-            uploadDate: new Date()
-        });
-        this.updatedAt = new Date();
-    }
-
-    updateStatus(status) {
-        this.status = status;
-        this.updatedAt = new Date();
-    }
-
-    toJSON() {
-        return {
-            id: this.id,
-            groomName: this.groomName,
-            brideName: this.brideName,
-            date: this.date,
-            time: this.time,
-            imamId: this.imamId,
-            witnesses: this.witnesses,
-            location: this.location,
-            mahr: this.mahr,
-            status: this.status,
-            documents: this.documents,
-            createdAt: this.createdAt,
-            updatedAt: this.updatedAt
-        };
-    }
-}
-
+const Nikah = mongoose.model('Nikah', nikahSchema);
 module.exports = Nikah;

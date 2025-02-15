@@ -8,6 +8,9 @@ const connectDB = require('./config/db'); // Import the connectDB function
 
 const app = express();
 
+// Connect to Database
+connectDB();
+
 // Security Middleware
 app.use(helmet());
 const limiter = rateLimit({
@@ -19,44 +22,25 @@ app.use(limiter);
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-// MongoDB Connection
-connectDB(); // Call the connectDB function
-
-// Route Imports
-const userRoutes = require('./routes/userRoutes');
-const prayerTimesRoutes = require('./routes/prayerTimesRoutes');
-const donationRoutes = require('./routes/donationRoutes');
-const eventRoutes = require('./routes/eventRoutes');
-const classRoutes = require('./routes/classRoutes');
-const communityRoutes = require('./routes/communityRoutes');
-const announcementRoutes = require('./routes/announcementRoutes');
-const libraryRoutes = require('./routes/libraryRoutes');
 
 // Routes
-app.use('/api/users', userRoutes);
-app.use('/api/prayer-times', prayerTimesRoutes);
-app.use('/api/donations', donationRoutes);
-app.use('/api/events', eventRoutes);
-app.use('/api/classes', classRoutes);
-app.use('/api/community', communityRoutes);
-app.use('/api/announcements', announcementRoutes);
-app.use('/api/library', libraryRoutes);
+app.use('/api/announcements', require('./routes/announcementRoutes'));
+app.use('/api/classes', require('./routes/classRoutes'));
+app.use('/api/community', require('./routes/communityRoutes'));
+app.use('/api/donations', require('./routes/donationRoutes'));
+app.use('/api/events', require('./routes/eventRoutes'));
+app.use('/api/library', require('./routes/libraryRoutes'));
+app.use('/api/prayerTimes', require('./routes/prayerTimesRoutes'));
+app.use('/api/users', require('./routes/userRoutes'));
 
-// Global Error Handler
+// Error Handling Middleware
 app.use((err, req, res, next) => {
     console.error(err.stack);
-    res.status(500).json({
-        message: 'Something went wrong!',
-        error: process.env.NODE_ENV === 'development' ? err.message : {}
-    });
+    res.status(500).send('Something broke!');
 });
 
-// Start the server
+// Start Server
 const PORT = process.env.PORT || 5000;
-const server = app.listen(PORT, () => {
+app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
-
-module.exports = server;

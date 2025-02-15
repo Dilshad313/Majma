@@ -18,7 +18,7 @@ router.get('/user', authMiddleware, getUserDonations);
 
 // Admin Routes
 router.get('/', authMiddleware, roleMiddleware(['admin']), getDonations);
-router.post('/process/:id', authMiddleware, roleMiddleware(['admin']), processDonation);
+router.post('/process', authMiddleware, roleMiddleware(['admin']), processDonation);
 router.get('/report', authMiddleware, roleMiddleware(['admin']), generateDonationReport);
 
 module.exports = router;

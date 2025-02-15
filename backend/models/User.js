@@ -1,83 +1,31 @@
-// models/User.js
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 
-class User {
-  constructor(id, firstName, lastName, email, phoneNumber, role) {
-      this.id = id;
-      this.firstName = firstName;
-      this.lastName = lastName;
-      this.email = email;
-      this.phoneNumber = phoneNumber;
-      this.role = role; // admin, member, volunteer, imam
-      this.password = null;
-      this.membershipStatus = 'active';
-      this.joinDate = new Date();
-      this.lastLogin = null;
-      this.preferences = {};
-      this.createdAt = new Date();
-      this.updatedAt = new Date();
-  }
+const userSchema = new mongoose.Schema({
+  firstName: { type: String, required: true },
+  lastName: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
+  phoneNumber: { type: String },
+  role: { type: String, default: 'member' },
+  password: { type: String, required: true },
+  membershipStatus: { type: String, default: 'active' },
+  joinDate: { type: Date, default: Date.now },
+  lastLogin: { type: Date },
+  preferences: { type: Map, of: String },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now }
+});
 
-  static create(firstName, lastName, email, phoneNumber, role) {
-      return new User(
-          Date.now().toString(),
-          firstName,
-          lastName,
-          email,
-          phoneNumber,
-          role
-      );
-  }
+userSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) return next();
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+  next();
+});
 
-  setPassword(hashedPassword) {
-      this.password = hashedPassword;
-      this.updatedAt = new Date();
-  }
+userSchema.methods.comparePassword = async function (password) {
+  return await bcrypt.compare(password, this.password);
+};
 
-  updateProfile(updates) {
-      Object.keys(updates).forEach(key => {
-          if (this.hasOwnProperty(key) && key !== 'id' && key !== 'password') {
-              this[key] = updates[key];
-          }
-      });
-      this.updatedAt = new Date();
-  }
-
-  updateMembershipStatus(status) {
-      this.membershipStatus = status;
-      this.updatedAt = new Date();
-  }
-
-  setPreference(key, value) {
-      this.preferences[key] = value;
-      this.updatedAt = new Date();
-  }
-
-  recordLogin() {
-      this.lastLogin = new Date();
-      this.updatedAt = new Date();
-  }
-
-  getFullName() {
-      return `${this.firstName} ${this.lastName}`;
-  }
-
-  toJSON() {
-      return {
-          id: this.id,
-          firstName: this.firstName,
-          lastName: this.lastName,
-          email: this.email,
-          phoneNumber: this.phoneNumber,
-          role: this.role,
-          membershipStatus: this.membershipStatus,
-          joinDate: this.joinDate,
-          lastLogin: this.lastLogin,
-          preferences: this.preferences,
-          createdAt: this.createdAt,
-          updatedAt: this.updatedAt
-      };
-  }
-}
-
+const User = mongoose.model('User', userSchema);
 module.exports = User;

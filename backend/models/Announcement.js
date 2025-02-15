@@ -2,66 +2,16 @@
 const mongoose = require('mongoose');
 const User = require('./User'); 
 
-class Announcement {
-    constructor(id, title, content, author, targetAudience, startDate, endDate) {
-        this.id = id;
-        this.title = title;
-        this.content = content;
-        this.author = author;
-        this.targetAudience = targetAudience;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.createdAt = new Date();
-        this.updatedAt = new Date();
-        this.isActive = true;
-    }
+const announcementSchema = new mongoose.Schema({
+  title: { type: String, required: true },
+  content: { type: String, required: true },
+  author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  targetAudience: { type: String, required: true },
+  startDate: { type: Date, required: true },
+  endDate: { type: Date, required: true },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now }
+});
 
-    static create(title, content, author, targetAudience, startDate, endDate) {
-        return new Announcement(
-            Date.now().toString(),
-            title,
-            content,
-            author,
-            targetAudience,
-            startDate,
-            endDate
-        );
-    }
-
-    update(updates) {
-        Object.keys(updates).forEach(key => {
-            if (this.hasOwnProperty(key) && key !== 'id') {
-                this[key] = updates[key];
-            }
-        });
-        this.updatedAt = new Date();
-        return this;
-    }
-
-    deactivate() {
-        this.isActive = false;
-        this.updatedAt = new Date();
-        return this;
-    }
-
-    isExpired() {
-        return this.endDate && new Date() > new Date(this.endDate);
-    }
-
-    toJSON() {
-        return {
-            id: this.id,
-            title: this.title,
-            content: this.content,
-            author: this.author,
-            targetAudience: this.targetAudience,
-            startDate: this.startDate,
-            endDate: this.endDate,
-            createdAt: this.createdAt,
-            updatedAt: this.updatedAt,
-            isActive: this.isActive
-        };
-    }
-}
-
+const Announcement = mongoose.model('Announcement', announcementSchema);
 module.exports = Announcement;

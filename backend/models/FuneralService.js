@@ -2,73 +2,19 @@
 const mongoose = require('mongoose');
 const User = require('./User');
 
-class FuneralService {
-    constructor(id, deceasedName, dateOfDeath, familyContact, serviceDate) {
-        this.id = id;
-        this.deceasedName = deceasedName;
-        this.dateOfDeath = dateOfDeath;
-        this.familyContact = familyContact;
-        this.serviceDate = serviceDate;
-        this.location = '';
-        this.imamAssigned = null;
-        this.status = 'scheduled';
-        this.additionalServices = [];
-        this.notes = '';
-        this.createdAt = new Date();
-        this.updatedAt = new Date();
-    }
+const funeralServiceSchema = new mongoose.Schema({
+  deceasedName: { type: String, required: true },
+  dateOfDeath: { type: Date, required: true },
+  familyContact: { type: String, required: true },
+  serviceDate: { type: Date, required: true },
+  imam: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now }
+});
 
-    static create(deceasedName, dateOfDeath, familyContact, serviceDate) {
-        return new FuneralService(
-            Date.now().toString(),
-            deceasedName,
-            dateOfDeath,
-            familyContact,
-            serviceDate
-        );
-    }
+funeralServiceSchema.methods.assignImam = function (imamId) {
+  this.imam = imamId;
+};
 
-    assignImam(imamId) {
-        this.imamAssigned = imamId;
-        this.updatedAt = new Date();
-    }
-
-    setLocation(location) {
-        this.location = location;
-        this.updatedAt = new Date();
-    }
-
-    updateStatus(status) {
-        this.status = status;
-        this.updatedAt = new Date();
-    }
-
-    addService(service) {
-        this.additionalServices.push(service);
-        this.updatedAt = new Date();
-    }
-
-    addNotes(note) {
-        this.notes += `${new Date().toISOString()}: ${note}\n`;
-        this.updatedAt = new Date();
-    }
-
-    toJSON() {
-        return {
-            id: this.id,
-            deceasedName: this.deceasedName,
-            dateOfDeath: this.dateOfDeath,
-            familyContact: this.familyContact,
-            serviceDate: this.serviceDate,
-            location: this.location,
-            imamAssigned: this.imamAssigned,
-            status: this.status,
-            additionalServices: this.additionalServices,
-            notes: this.notes,
-            createdAt: this.createdAt,
-            updatedAt: this.updatedAt
-        };
-    }
-}
-
+const FuneralService = mongoose.model('FuneralService', funeralServiceSchema);
 module.exports = FuneralService;

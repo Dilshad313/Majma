@@ -21,8 +21,8 @@ router.get('/:id', getClassById);
 router.post('/register/:classId', authMiddleware, registerForClass);
 
 // Admin Routes
-router.post('/', authMiddleware, roleMiddleware(['admin', 'imam']), createClass);
-router.put('/:id', authMiddleware, roleMiddleware(['admin', 'imam']), updateClass);
-router.delete('/:id', authMiddleware, roleMiddleware(['admin', 'imam']), deleteClass);
+router.post('/', authMiddleware, roleMiddleware(['admin']), createClass);
+router.put('/:id', authMiddleware, roleMiddleware(['admin']), updateClass);
+router.delete('/:id', authMiddleware, roleMiddleware(['admin']), deleteClass);
 
 module.exports = router;

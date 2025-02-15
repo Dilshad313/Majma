@@ -1,79 +1,26 @@
 // models/PrayerTimes.js
 const mongoose = require('mongoose');
 
-class PrayerTimes {
-    constructor(id, date, fajr, sunrise, dhuhr, asr, maghrib, isha) {
-        this.id = id;
-        this.date = date;
-        this.fajr = fajr;
-        this.sunrise = sunrise;
-        this.dhuhr = dhuhr;
-        this.asr = asr;
-        this.maghrib = maghrib;
-        this.isha = isha;
-        this.jamahTimes = {};
-        this.specialAnnouncements = [];
-        this.lastUpdated = new Date();
-    }
+const prayerTimesSchema = new mongoose.Schema({
+  date: { type: Date, required: true },
+  fajr: { type: String, required: true },
+  sunrise: { type: String, required: true },
+  dhuhr: { type: String, required: true },
+  asr: { type: String, required: true },
+  maghrib: { type: String, required: true },
+  isha: { type: String, required: true },
+  announcements: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Announcement' }],
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now }
+});
 
-    static create(date, fajr, sunrise, dhuhr, asr, maghrib, isha) {
-        return new PrayerTimes(
-            Date.now().toString(),
-            date,
-            fajr,
-            sunrise,
-            dhuhr,
-            asr,
-            maghrib,
-            isha
-        );
-    }
+prayerTimesSchema.methods.setJamahTime = function (prayer, time) {
+  this[prayer] = time;
+};
 
-    setJamahTime(prayer, time) {
-        this.jamahTimes[prayer] = time;
-        this.lastUpdated = new Date();
-    }
+prayerTimesSchema.methods.addAnnouncement = function (announcementId) {
+  this.announcements.push(announcementId);
+};
 
-    addAnnouncement(announcement) {
-        this.specialAnnouncements.push({
-            message: announcement,
-            date: new Date()
-        });
-        this.lastUpdated = new Date();
-    }
-
-    getNextPrayer() {
-        const now = new Date();
-        const prayers = ['fajr', 'sunrise', 'dhuhr', 'asr', 'maghrib', 'isha'];
-        
-        for (let prayer of prayers) {
-            const prayerTime = new Date(`${this.date}T${this[prayer]}`);
-            if (prayerTime > now) {
-                return {
-                    name: prayer,
-                    time: this[prayer],
-                    jamahTime: this.jamahTimes[prayer]
-                };
-            }
-        }
-        return null;
-    }
-
-    toJSON() {
-        return {
-            id: this.id,
-            date: this.date,
-            fajr: this.fajr,
-            sunrise: this.sunrise,
-            dhuhr: this.dhuhr,
-            asr: this.asr,
-            maghrib: this.maghrib,
-            isha: this.isha,
-            jamahTimes: this.jamahTimes,
-            specialAnnouncements: this.specialAnnouncements,
-            lastUpdated: this.lastUpdated
-        };
-    }
-}
-
+const PrayerTimes = mongoose.model('PrayerTimes', prayerTimesSchema);
 module.exports = PrayerTimes;

@@ -17,8 +17,8 @@ router.get('/', getAnnouncements);
 router.get('/:id', getAnnouncementById);
 
 // Admin Routes
-router.post('/', authMiddleware, roleMiddleware(['admin', 'imam']), createAnnouncement);
-router.put('/:id', authMiddleware, roleMiddleware(['admin', 'imam']), updateAnnouncement);
-router.delete('/:id', authMiddleware, roleMiddleware(['admin', 'imam']), deleteAnnouncement);
+router.post('/', authMiddleware, roleMiddleware(['admin']), createAnnouncement);
+router.put('/:id', authMiddleware, roleMiddleware(['admin']), updateAnnouncement);
+router.delete('/:id', authMiddleware, roleMiddleware(['admin']), deleteAnnouncement);
 
 module.exports = router;

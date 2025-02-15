@@ -2,87 +2,29 @@
 const mongoose = require('mongoose');
 const User = require('./User');
 
-class Class {
-    constructor(id, name, grade, section, teacher, schedule, capacity) {
-        this.id = id;
-        this.name = name;
-        this.grade = grade;
-        this.section = section;
-        this.teacher = teacher;
-        this.schedule = schedule;
-        this.capacity = capacity;
-        this.students = [];
-        this.createdAt = new Date();
-        this.updatedAt = new Date();
-        this.isActive = true;
-    }
+const classSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  grade: { type: String, required: true },
+  section: { type: String, required: true },
+  teacher: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  schedule: { type: String, required: true },
+  capacity: { type: Number, required: true },
+  students: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now }
+});
 
-    static create(name, grade, section, teacher, schedule, capacity) {
-        return new Class(
-            Date.now().toString(),
-            name,
-            grade,
-            section,
-            teacher,
-            schedule,
-            capacity
-        );
-    }
+classSchema.methods.addStudent = function (studentId) {
+  if (this.students.length < this.capacity) {
+    this.students.push(studentId);
+  } else {
+    throw new Error('Class is full');
+  }
+};
 
-    addStudent(student) {
-        if (this.students.length < this.capacity && !this.students.includes(student.id)) {
-            this.students.push(student.id);
-            this.updatedAt = new Date();
-            return true;
-        }
-        return false;
-    }
+classSchema.methods.removeStudent = function (studentId) {
+  this.students = this.students.filter(id => id.toString() !== studentId.toString());
+};
 
-    removeStudent(studentId) {
-        const index = this.students.indexOf(studentId);
-        if (index !== -1) {
-            this.students.splice(index, 1);
-            this.updatedAt = new Date();
-            return true;
-        }
-        return false;
-    }
-
-    updateSchedule(newSchedule) {
-        this.schedule = newSchedule;
-        this.updatedAt = new Date();
-        return this;
-    }
-
-    updateTeacher(newTeacher) {
-        this.teacher = newTeacher;
-        this.updatedAt = new Date();
-        return this;
-    }
-
-    getStudentCount() {
-        return this.students.length;
-    }
-
-    hasAvailableSeats() {
-        return this.students.length < this.capacity;
-    }
-
-    toJSON() {
-        return {
-            id: this.id,
-            name: this.name,
-            grade: this.grade,
-            section: this.section,
-            teacher: this.teacher,
-            schedule: this.schedule,
-            capacity: this.capacity,
-            students: this.students,
-            createdAt: this.createdAt,
-            updatedAt: this.updatedAt,
-            isActive: this.isActive
-        };
-    }
-}
-
+const Class = mongoose.model('Class', classSchema);
 module.exports = Class;

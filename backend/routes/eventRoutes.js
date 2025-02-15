@@ -21,8 +21,8 @@ router.get('/:id', getEventById);
 router.post('/register/:eventId', authMiddleware, registerForEvent);
 
 // Admin Routes
-router.post('/', authMiddleware, roleMiddleware(['admin', 'imam']), createEvent);
-router.put('/:id', authMiddleware, roleMiddleware(['admin', 'imam']), updateEvent);
-router.delete('/:id', authMiddleware, roleMiddleware(['admin', 'imam']), deleteEvent);
+router.post('/', authMiddleware, roleMiddleware(['admin']), createEvent);
+router.put('/:id', authMiddleware, roleMiddleware(['admin']), updateEvent);
+router.delete('/:id', authMiddleware, roleMiddleware(['admin']), deleteEvent);
 
 module.exports = router;

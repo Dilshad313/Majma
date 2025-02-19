@@ -1,6 +1,5 @@
-// models/Announcement.js
 const mongoose = require('mongoose');
-const User = require('./User'); 
+const User = require('./User');
 
 const announcementSchema = new mongoose.Schema({
   title: { type: String, required: true },

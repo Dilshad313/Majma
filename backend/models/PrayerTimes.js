@@ -1,4 +1,3 @@
-// models/PrayerTimes.js
 const mongoose = require('mongoose');
 
 const prayerTimesSchema = new mongoose.Schema({

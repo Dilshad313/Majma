@@ -1,4 +1,3 @@
-// models/Volunteer.js
 const mongoose = require('mongoose');
 const User = require('./User');
 

@@ -2,41 +2,51 @@ import { useState, useContext, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import AuthContext from '../context/AuthContext';
 
-const Login = () => {
+const Register = () => {
   const [formData, setFormData] = useState({
+    name: '',
     email: '',
-    password: ''
+    password: '',
+    confirmPassword: ''
   });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
-  
-  const { email, password } = formData;
-  const { login, isAuthenticated, clearErrors } = useContext(AuthContext);
+  const { register, isAuthenticated } = useContext(AuthContext);
   const navigate = useNavigate();
-  
+
   useEffect(() => {
     if (isAuthenticated) {
       navigate('/dashboard');
     }
-    
-    return () => {
-      clearErrors();
-    };
-  }, [isAuthenticated, navigate, clearErrors]);
-  
+  }, [isAuthenticated, navigate]);
+
+  const { name, email, password, confirmPassword } = formData;
+
   const onChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     setError('');
   };
-  
+
   const onSubmit = async (e) => {
     e.preventDefault();
-    const success = await login(email, password);
+    
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+
+    const userData = {
+      name,
+      email,
+      password
+    };
+
+    const success = await register(userData);
     if (!success) {
-      setError('Invalid credentials');
+      setError('Registration failed. Please try again.');
     }
   };
-  
+
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
@@ -49,7 +59,7 @@ const Login = () => {
             Mosque Management System
           </h2>
           <h3 className="mt-2 text-center text-xl text-green-600">
-            Sign in to your account
+            Create your account
           </h3>
         </div>
         
@@ -62,6 +72,20 @@ const Login = () => {
         <form className="mt-8 space-y-6" onSubmit={onSubmit}>
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
+              <label htmlFor="name" className="sr-only">Full Name</label>
+              <input
+                id="name"
+                name="name"
+                type="text"
+                autoComplete="name"
+                required
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
+                placeholder="Full Name"
+                value={name}
+                onChange={onChange}
+              />
+            </div>
+            <div>
               <label htmlFor="email" className="sr-only">Email address</label>
               <input
                 id="email"
@@ -69,7 +93,7 @@ const Login = () => {
                 type="email"
                 autoComplete="email"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
                 placeholder="Email address"
                 value={email}
                 onChange={onChange}
@@ -81,9 +105,9 @@ const Login = () => {
                 id="password"
                 name="password"
                 type={showPassword ? "text" : "password"}
-                autoComplete="current-password"
+                autoComplete="new-password"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
                 placeholder="Password"
                 value={password}
                 onChange={onChange}
@@ -105,25 +129,19 @@ const Login = () => {
                 )}
               </button>
             </div>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
+            <div className="relative">
+              <label htmlFor="confirmPassword" className="sr-only">Confirm Password</label>
               <input
-                id="remember-me"
-                name="remember-me"
-                type="checkbox"
-                className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
+                id="confirmPassword"
+                name="confirmPassword"
+                type={showPassword ? "text" : "password"}
+                autoComplete="new-password"
+                required
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
+                placeholder="Confirm Password"
+                value={confirmPassword}
+                onChange={onChange}
               />
-              <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
-                Remember me
-              </label>
-            </div>
-
-            <div className="text-sm">
-              <Link to="/forgot-password" className="font-medium text-green-600 hover:text-green-500">
-                Forgot your password?
-              </Link>
             </div>
           </div>
 
@@ -132,16 +150,16 @@ const Login = () => {
               type="submit"
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
             >
-              Sign in
+              Register
             </button>
           </div>
         </form>
         
         <div className="text-center mt-4">
           <p className="text-sm text-gray-600">
-            Don't have an account?{' '}
-            <Link to="/register" className="font-medium text-green-600 hover:text-green-500">
-              Sign up
+            Already have an account?{' '}
+            <Link to="/login" className="font-medium text-green-600 hover:text-green-500">
+              Sign in
             </Link>
           </p>
         </div>
@@ -150,4 +168,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Register;

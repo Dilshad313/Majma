@@ -64,7 +64,7 @@ const Profile = () => {
         <h1 className="text-3xl font-bold mb-6 text-center">User Profile</h1>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block mb-1">First Name</label>
+            <label className="block mb-1">First Nam</label>
             <input
               type="text"
               placeholder="First Name"

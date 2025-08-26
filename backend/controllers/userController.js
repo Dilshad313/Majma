@@ -57,7 +57,7 @@ exports.loginUser = async (req, res) => {
     const { email, password } = req.body;
 
     const user = await User.findOne({ email });
-    if (!user || !(await user.matchPassword(password))) {
+        if (!user || !(await user.comparePassword(password))) {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
 
@@ -122,9 +122,9 @@ exports.updateUserProfile = async (req, res) => {
   }
 };
 
-exports.getUsers = async (req, res) => {
+exports.getAllUsers = async (req, res) => {
   try {
-    const users = await User.find();
+    const users = await User.find().select('firstName lastName role');
     res.json(users);
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });

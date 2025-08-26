@@ -25,7 +25,7 @@ const Signup = () => {
       if (res.data?.token) {
         localStorage.setItem('token', res.data.token);
         toast.success('Signup successful');
-        navigate('/profile');
+        navigate('/');
       } else {
         toast.error('Signup failed');
       }

@@ -16,7 +16,7 @@ const Login = () => {
       if (res.data?.token) {
         localStorage.setItem("token", res.data.token);
         toast.success("Login successful!");
-        navigate("/profile");
+        navigate("/");
       } else {
         toast.error("Invalid credentials");
       }

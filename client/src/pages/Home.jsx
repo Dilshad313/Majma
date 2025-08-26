@@ -1,15 +1,50 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import api from '../services/api';
 
 const Home = () => {
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        try {
+          const res = await api.get('/users/profile');
+          setUser(res.data);
+        } catch (error) {
+          console.error('Failed to fetch user profile', error);
+          localStorage.removeItem('token');
+        }
+      }
+    };
+    fetchUser();
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    setUser(null);
+    navigate('/login');
+  };
+
   return (
     <div className="container mx-auto p-4">
       <div className="bg-gray-100 p-8 rounded-lg shadow-lg mb-8">
         <h1 className="text-4xl font-bold mb-4 text-center">Welcome to Majma</h1>
         <p className="text-lg mb-4 text-center">Your one-stop solution for managing mosque activities.</p>
         <div className="flex justify-center space-x-4 mb-8">
-          <Link to="/login" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300">Login</Link>
-          <Link to="/signup" className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition duration-300">Signup</Link>
+          {user ? (
+            <div className='flex items-center space-x-4'>
+              <p className='text-lg'>Welcome, {user.firstName} {user.lastName}!</p>
+              <button onClick={handleLogout} className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition duration-300">Logout</button>
+            </div>
+          ) : (
+            <>
+              <Link to="/login" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300">Login</Link>
+              <Link to="/signup" className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition duration-300">Signup</Link>
+            </>
+          )}
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

@@ -5,7 +5,7 @@ const {
   loginUser,
   getUserProfile,
   updateUserProfile,
-  getUsers,
+  getAllUsers,
   deleteUser
 } = require('../controllers/userController');
 const { 
@@ -26,7 +26,7 @@ router.get('/profile', authMiddleware, getUserProfile);
 router.put('/profile', authMiddleware, updateUserProfile);
 
 // Admin Routes
-router.get('/', authMiddleware, roleMiddleware(['admin']), getUsers);
+router.get('/', authMiddleware, roleMiddleware(['admin']), getAllUsers);
 router.delete('/:id', authMiddleware, roleMiddleware(['admin']), deleteUser);
 
 module.exports = router;

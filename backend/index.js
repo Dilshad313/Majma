@@ -33,13 +33,13 @@ app.use('/api/library', require('./routes/libraryRoutes'));
 app.use('/api/prayerTimes', require('./routes/prayerTimesRoutes'));
 app.use('/api/users', require('./routes/userRoutes'));
 
-// Error Handling Middleware
+
 app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).send('Something broke!');
 });
 
-// Start Server
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);

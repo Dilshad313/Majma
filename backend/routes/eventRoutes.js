@@ -5,23 +5,20 @@ const {
   getEvents,
   getEventById,
   updateEvent,
-  deleteEvent,
-  registerForEvent
+  deleteEvent
 } = require('../controllers/eventController');
 const { 
   authMiddleware, 
   roleMiddleware 
 } = require('../middlewares/authMiddleware');
+const { eventValidation } = require('../validations/eventValidation');
 
 // Public Routes
 router.get('/', getEvents);
 router.get('/:id', getEventById);
 
-// Protected Routes
-router.post('/register/:eventId', authMiddleware, registerForEvent);
-
 // Admin Routes
-router.post('/', authMiddleware, roleMiddleware(['admin']), createEvent);
+router.post('/', authMiddleware, roleMiddleware(['admin']), eventValidation, createEvent);
 router.put('/:id', authMiddleware, roleMiddleware(['admin']), updateEvent);
 router.delete('/:id', authMiddleware, roleMiddleware(['admin']), deleteEvent);
 

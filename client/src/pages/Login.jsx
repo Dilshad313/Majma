@@ -16,7 +16,15 @@ const Login = () => {
       if (res.data?.token) {
         localStorage.setItem("token", res.data.token);
         toast.success("Login successful!");
-        navigate("/");
+        
+        // Decode the token to get user role
+        const user = JSON.parse(atob(res.data.token.split('.')[1]));
+
+        if (user.role === 'admin') {
+          navigate("/admin/dashboard");
+        } else {
+          navigate("/");
+        }
       } else {
         toast.error("Invalid credentials");
       }

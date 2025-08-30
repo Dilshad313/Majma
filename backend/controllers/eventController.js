@@ -1,13 +1,31 @@
 const Event = require('../models/Event');
-const User = require('../models/User');
+const { validationResult } = require('express-validator');
 
 exports.createEvent = async (req, res) => {
   try {
-    const event = new Event(req.body);
-    await event.save();
-    res.status(201).json(event);
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { title, description, date, time, location } = req.body;
+
+    const newEvent = new Event({
+      title,
+      description,
+      date,
+      time,
+      location
+    });
+
+    await newEvent.save();
+
+    res.status(201).json({
+      message: 'Event created successfully',
+      event: newEvent
+    });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error during event creation', error: error.message });
   }
 };
 
@@ -51,20 +69,6 @@ exports.deleteEvent = async (req, res) => {
       return res.status(404).json({ message: 'Event not found' });
     }
     res.json({ message: 'Event deleted' });
-  } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
-  }
-};
-
-exports.registerForEvent = async (req, res) => {
-  try {
-    const event = await Event.findById(req.params.eventId);
-    if (!event) {
-      return res.status(404).json({ message: 'Event not found' });
-    }
-    event.attendees.push(req.user._id);
-    await event.save();
-    res.json(event);
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
   }

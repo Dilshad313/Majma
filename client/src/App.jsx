@@ -14,6 +14,9 @@ import MyClasses from './components/Dashboard/MyClasses';
 import MyDonations from './components/Dashboard/MyDonations';
 import Announcements from './components/Dashboard/Announcements';
 import Navbar from './components/Navbar/Navbar';
+import AdminRoute from './components/Admin/AdminRoute';
+import AdminDashboardPage from './pages/Admin/AdminDashboardPage';
+import AdminLoginPage from './pages/Admin/AdminLoginPage';
 
 const App = () => {
     return (
@@ -30,6 +33,10 @@ const App = () => {
                     <Route path="classes" element={<MyClasses />} />
                     <Route path="donations" element={<MyDonations />} />
                     <Route path="announcements" element={<Announcements />} />
+                </Route>
+                <Route path="/admin/login" element={<AdminLoginPage />} />
+                <Route path="/admin/dashboard" element={<AdminRoute />}>
+                    <Route path="" element={<AdminDashboardPage />} />
                 </Route>
             </Routes>
         </Router>

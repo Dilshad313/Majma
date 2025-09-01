@@ -9,6 +9,7 @@ const AdminRoute = () => {
 
   // Decode the token to get user role
   const user = JSON.parse(atob(token.split('.')[1]));
+  console.log('user', user);
 
   return user.role === 'admin' ? <Outlet /> : <Navigate to="/login" />;
 };

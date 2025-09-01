@@ -5,9 +5,9 @@ import { ToastContainer } from 'react-toastify';
 // Routes
 import 'react-toastify/dist/ReactToastify.css';
 import Home from './pages/Home';
-import Login from './pages/Login';
+import UserLoginPage from './pages/UserLoginPage';
 import Signup from './pages/Signup';
-import Dashboard from './pages/Dashboard';
+import UserDashboardPage from './pages/UserDashboardPage';
 import Profile from './components/Dashboard/Profile';
 import MyEvents from './components/Dashboard/MyEvents';
 import MyClasses from './components/Dashboard/MyClasses';
@@ -17,6 +17,9 @@ import Navbar from './components/Navbar/Navbar';
 import AdminRoute from './components/Admin/AdminRoute';
 import AdminDashboardPage from './pages/Admin/AdminDashboardPage';
 import AdminLoginPage from './pages/Admin/AdminLoginPage';
+import AddEmployee from './components/Admin/AddEmployee';
+import AddEvent from './components/Admin/AddEvent';
+import UserList from './components/Admin/UserList';
 
 const App = () => {
     return (
@@ -25,9 +28,9 @@ const App = () => {
             <Navbar />
             <Routes>
                 <Route path="/" element={<Home />} />
-                <Route path="/login" element={<Login />} />
+                <Route path="/login" element={<UserLoginPage />} />
                 <Route path="/signup" element={<Signup />} />
-                <Route path="/dashboard" element={<Dashboard />}>
+                <Route path="/dashboard" element={<UserDashboardPage />}>
                     <Route path="profile" element={<Profile />} />
                     <Route path="events" element={<MyEvents />} />
                     <Route path="classes" element={<MyClasses />} />
@@ -37,6 +40,9 @@ const App = () => {
                 <Route path="/admin/login" element={<AdminLoginPage />} />
                 <Route path="/admin/dashboard" element={<AdminRoute />}>
                     <Route path="" element={<AdminDashboardPage />} />
+                    <Route path="add-employee" element={<AddEmployee />} />
+                    <Route path="add-event" element={<AddEvent />} />
+                    <Route path="user-list" element={<UserList />} />
                 </Route>
             </Routes>
         </Router>
